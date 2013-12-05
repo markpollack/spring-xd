@@ -26,7 +26,7 @@ import org.springframework.util.Assert;
  * Describes how the basic stream definition will be transformed to a physical deployment model taking into accout
  * co-location of modules, data partitioning, module instances, and module placement on nodes.
  * 
- * Intended to be mapped onto a YAML file with separate sections for individual jobs, steams.
+ * Intended to be mapped from a YAML file with separate sections for individual jobs, steams.
  * 
  * @author Mark Pollack
  */

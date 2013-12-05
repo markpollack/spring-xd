@@ -24,7 +24,7 @@ import org.springframework.util.Assert;
 
 
 /**
- * Encapsulates the manifest data relating to colocate streams on the same node
+ * Encapsulates the manifest data relating to colocate streams so they execute on the same node.
  * 
  * @author Mark Pollack
  */

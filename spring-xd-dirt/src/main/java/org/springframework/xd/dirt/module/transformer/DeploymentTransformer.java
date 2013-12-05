@@ -18,6 +18,10 @@ package org.springframework.xd.dirt.module.transformer;
 
 
 /**
+ * Responsible for transforming an initial deployment model, usually taken from parsing a stream/job definition, to the
+ * final deployment model taking into account the deployment options specified in the deployment manifest.
+ * 
+ * @see DeploymentManifest
  * 
  * @author Mark Pollack
  */
