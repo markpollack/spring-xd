@@ -16,6 +16,7 @@
 
 package org.springframework.xd.dirt.module.transformer;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.util.Assert;
@@ -43,6 +44,20 @@ public class DeploymentModel {
 	public DeploymentModel(List<ModuleDeploymentRequest> deploymentRequests) {
 		Assert.notNull(deploymentRequests, "deploymentRequests cannot be null");
 		this.deploymentRequests = deploymentRequests;
+	}
+
+	/**
+	 * Create a deep copy of the deployment model.
+	 * 
+	 * @return copy of the deployment model
+	 */
+	public DeploymentModel deepCopy() {
+		List<ModuleDeploymentRequest> deepCopy = new ArrayList<ModuleDeploymentRequest>();
+		for (ModuleDeploymentRequest mdr : deploymentRequests) {
+			ModuleDeploymentRequest newRequest = mdr.copy();
+			deepCopy.add(newRequest);
+		}
+		return new DeploymentModel(deepCopy);
 	}
 
 	@Override

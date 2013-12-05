@@ -16,6 +16,11 @@
 
 package org.springframework.xd.dirt.module.transformer;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.util.Assert;
+
 
 /**
  * Describes how the basic stream definition will be transformed to a physical deployment model taking into accout
@@ -26,6 +31,38 @@ package org.springframework.xd.dirt.module.transformer;
  * @author Mark Pollack
  */
 public class DeploymentManifest {
+
+	private Map<String, StreamColocationSpec> streamCompositionSpecMap = new HashMap<String, StreamColocationSpec>();
+
+	/*--- formatting messed this up...
+	streams: 
+	deployment1:
+	myStream: 
+	    coloate: 
+	      - 
+	        colocateBandC: 
+	          - b
+	          - c
+	        colocateDandE: 
+	          - d
+	          - e
+	 */
+
+	public void addColocation(String streamName, StreamColocationSpec streamColocationSpec) {
+		Assert.notNull(streamName, "streamName cannot be null");
+		Assert.notNull(streamColocationSpec, "streamCompositionSpec cannot be null");
+		streamCompositionSpecMap.put(streamName, streamColocationSpec);
+	}
+
+	public boolean hasEmptyStreamColocationSpecMap() {
+		return streamCompositionSpecMap.isEmpty();
+	}
+
+	public Map<String, StreamColocationSpec> getStreamColocationSpecMap() {
+		Map<String, StreamColocationSpec> shallowCopy = new HashMap<String, StreamColocationSpec>();
+		shallowCopy.putAll(streamCompositionSpecMap);
+		return shallowCopy;
+	}
 
 
 }

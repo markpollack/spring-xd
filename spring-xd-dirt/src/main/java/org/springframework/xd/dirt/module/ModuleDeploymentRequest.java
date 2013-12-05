@@ -45,6 +45,8 @@ public class ModuleDeploymentRequest implements Comparable<ModuleDeploymentReque
 
 	private volatile String group;
 
+	private volatile String colocationGroupName;
+
 	private volatile String sourceChannelName;
 
 	private volatile String sinkChannelName;
@@ -70,6 +72,10 @@ public class ModuleDeploymentRequest implements Comparable<ModuleDeploymentReque
 
 	public String getGroup() {
 		return group;
+	}
+
+	public String getColocationGroupName() {
+		return colocationGroupName;
 	}
 
 	public void setGroup(String group) {
@@ -132,6 +138,16 @@ public class ModuleDeploymentRequest implements Comparable<ModuleDeploymentReque
 		this.launch = launch;
 	}
 
+	/**
+	 * Tag this module deployment as belonging to a group.
+	 * 
+	 * @param colocationGroupName name of the group
+	 */
+	public void setColocationGroupName(String colocationGroupName) {
+		this.colocationGroupName = colocationGroupName;
+	}
+
+
 	@Override
 	public String toString() {
 		try {
@@ -143,10 +159,28 @@ public class ModuleDeploymentRequest implements Comparable<ModuleDeploymentReque
 		}
 	}
 
+	public ModuleDeploymentRequest copy() {
+		ModuleDeploymentRequest request = new ModuleDeploymentRequest();
+		request.setGroup(this.getGroup());
+		request.setIndex(this.getIndex());
+		request.setLaunch(this.isLaunch());
+		request.setModule(this.getModule());
+		Map<String, String> params = getParameters();
+		for (Map.Entry<String, String> entry : params.entrySet()) {
+			request.setParameter(entry.getKey(), entry.getValue());
+		}
+		request.setRemove(this.isRemove());
+		request.setSinkChannelName(this.getSinkChannelName());
+		request.setSourceChannelName(this.getSourceChannelName());
+		request.setType(this.getType());
+		return request;
+	}
+
 	@Override
 	public int compareTo(ModuleDeploymentRequest o) {
 		Assert.notNull(o, "ModuleDeploymentRequest must not be null");
 		return Integer.valueOf(this.getIndex()).compareTo(Integer.valueOf(o.getIndex()));
 	}
+
 
 }
