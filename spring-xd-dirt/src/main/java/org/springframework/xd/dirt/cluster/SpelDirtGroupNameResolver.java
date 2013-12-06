@@ -66,7 +66,7 @@ public class SpelDirtGroupNameResolver implements DirtGroupNameResolver {
 			matched = exp.getValue(context, Boolean.class);
 		}
 		catch (Exception e) {
-			logger.info("Could not resolve container node to group. Expression = [" + expression + "], Context = "
+			logger.error("Could not resolve container node to group. Expression = [" + expression + "], Context = "
 					+ node.getResourceOffer().getAttributes());
 		}
 		if (matched) {

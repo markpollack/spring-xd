@@ -16,7 +16,6 @@
 
 package org.springframework.xd.dirt.module.transformer;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -44,6 +43,7 @@ public class DefaultDeploymentTransformer implements DeploymentTransformer {
 			}
 
 		}
+
 		return transformedModel;
 	}
 
@@ -52,9 +52,9 @@ public class DefaultDeploymentTransformer implements DeploymentTransformer {
 	 * @param deploymentModel
 	 * @return
 	 */
-	private List<ModuleDeploymentRequest> tagModulesToColocate(String streamName,
+	private void tagModulesToColocate(String streamName,
 			StreamColocationSpec streamCompositionSpec, DeploymentModel deploymentModel) {
-		List<ModuleDeploymentRequest> matchingModules = new ArrayList<ModuleDeploymentRequest>();
+		// List<ModuleDeploymentRequest> matchingModules = new ArrayList<ModuleDeploymentRequest>();
 
 		List<ModuleDeploymentRequest> modulesToSearch = deploymentModel.getDeploymentRequests();
 		for (ModuleDeploymentRequest moduleDeploymentRequest : modulesToSearch) {
@@ -71,6 +71,5 @@ public class DefaultDeploymentTransformer implements DeploymentTransformer {
 				}
 			}
 		}
-		return null;
 	}
 }

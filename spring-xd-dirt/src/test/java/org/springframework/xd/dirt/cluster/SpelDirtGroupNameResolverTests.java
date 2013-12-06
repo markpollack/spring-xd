@@ -19,9 +19,6 @@ package org.springframework.xd.dirt.cluster;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.junit.Test;
 
 
@@ -37,7 +34,7 @@ public class SpelDirtGroupNameResolverTests {
 	 */
 	@Test
 	public void testEmptyExpression() {
-		DirtContainerNode node = createNode("alphaNode", "groupName", "pepsi");
+		DirtContainerNode node = ClusterUtils.createNode("alphaNode", "groupName", "pepsi");
 		SpelDirtGroupNameResolver resolver = new SpelDirtGroupNameResolver("", "emptyGroup");
 		String groupName = resolver.resolve(node);
 		assertNull(groupName);
@@ -45,17 +42,10 @@ public class SpelDirtGroupNameResolverTests {
 
 	@Test
 	public void testValidEpression() {
-		DirtContainerNode node = createNode("alphaNode", "groupName", "pepsi");
-		SpelDirtGroupNameResolver resolver = new SpelDirtGroupNameResolver("", "pepsiGroup");
+		DirtContainerNode node = ClusterUtils.createNode("alphaNode", "groupName", "pepsi");
+		SpelDirtGroupNameResolver resolver = new SpelDirtGroupNameResolver("['groupName'] == 'pepsi'", "pepsiGroup");
 		String groupName = resolver.resolve(node);
 		assertEquals("pepsiGroup", groupName);
 	}
 
-	private DirtContainerNode createNode(String nodeName, String key, String value) {
-		Map<String, Object> nodeAttributes = new HashMap<String, Object>();
-		nodeAttributes.put(key, value);
-		ResourceOffer resourceOffer = new ResourceOffer(nodeAttributes);
-		Address address = new Address("direct://my-exchange/routing-key");
-		return new DirtContainerNode(nodeName, address, resourceOffer);
-	}
 }

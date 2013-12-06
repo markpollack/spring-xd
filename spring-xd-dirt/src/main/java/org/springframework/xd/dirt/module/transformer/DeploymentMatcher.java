@@ -16,18 +16,17 @@
 
 package org.springframework.xd.dirt.module.transformer;
 
+import org.springframework.xd.dirt.cluster.Cluster;
+
 
 /**
- * Responsible for transforming an initial deployment model, usually taken from parsing a stream/job definition, to the
- * final deployment model taking into account the deployment options specified in the deployment manifest.
- * 
- * @see DeploymentManifest
+ * Responsible for the physical mapping of modules to nodes in the cluster.
  * 
  * @author Mark Pollack
  */
-public interface DeploymentTransformer {
+public interface DeploymentMatcher {
 
-	DeploymentModel transform(DeploymentModel deploymentModel, DeploymentManifest deploymentManifest);
+	DeploymentModel match(DeploymentModel deploymentModel, Cluster cluster);
 
 	// TODO consider moving methods into DeploymentModel
 }

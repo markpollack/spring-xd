@@ -62,10 +62,13 @@ public class DeploymentTransformerTests extends StreamTestSupport {
 		modulesToColocate.add("testprocessor1");
 		modulesToColocate.add("testprocessor2");
 		colocationSpec.add("group1", modulesToColocate);
-
-
 		DeploymentManifest deploymentManifest = new DeploymentManifest();
 		deploymentManifest.addColocation("simple", colocationSpec);
+
+		// DeploymentManifestBuilder deploymentManifestBuilder = new DeploymentManifestBuilder();
+
+		// deploymentManifestBuilder.forStream("simple").colocate("testprocessor1",
+		// "testprocessor2").withLabel("group1");
 
 		DeploymentModel transformedModel = transformer.transform(initialModel, deploymentManifest);
 
@@ -75,10 +78,8 @@ public class DeploymentTransformerTests extends StreamTestSupport {
 		assertEquals(2, requests.size());
 		assertEquals("group1", requests.get(0).getColocationGroupName());
 		assertEquals("group1", requests.get(1).getColocationGroupName());
-		// DeploymentManifestBuilder deploymentManifestBuilder = new DeploymentManifestBuilder();
 
-		// deploymentManifestBuilder.forStream("simple").colocate("testprocessor1",
-		// "testprocessor2").withLabel("group1");
+
 	}
 
 	/**
