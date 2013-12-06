@@ -17,9 +17,10 @@
 package org.springframework.xd.dirt.cluster;
 
 
-
 /**
  * Resolves a node into a group name.
+ * 
+ * Note: This is an intentionally simple strategy just for the purposes of a spike.
  * 
  * @author Mark Pollack
  */
