@@ -38,12 +38,15 @@ import org.junit.Test;
 import org.springframework.batch.core.JobParameter;
 import org.springframework.shell.core.CommandResult;
 import org.springframework.xd.shell.util.Table;
+import org.springframework.xd.shell.util.TableRow;
 
 /**
- * Test stream commands
- *
+ * Test {@link JobCommands}.
+ * 
  * @author Glenn Renfro
  * @author Gunnar Hillert
+ * @author Ilayaperumal Gopinathan
+ * @since 1.0
  */
 public class JobCommandTests extends AbstractJobIntegrationTest {
 
@@ -330,5 +333,64 @@ public class JobCommandTests extends AbstractJobIntegrationTest {
 		final Table jobExecutions = listJobExecutions();
 		String id = jobExecutions.getRows().get(0).getValue(1);
 		displayJobExecution(id);
+	}
+
+	@Test
+	public void testListStepExecutionsForSpecificJobExecution() {
+		executeJobCreate(MY_JOB, JOB_WITH_PARAMETERS_DESCRIPTOR);
+		checkForJobInList(MY_JOB, JOB_WITH_PARAMETERS_DESCRIPTOR, true);
+		executeJobLaunch(MY_JOB);
+		final Table jobExecutions = listJobExecutions();
+		String jobExecutionId = jobExecutions.getRows().get(0).getValue(1);
+
+		final Table stepExecutions = listStepExecutions(jobExecutionId);
+		String stepExecutionId = stepExecutions.getRows().get(0).getValue(1);
+
+		assertNotNull(stepExecutionId);
+	}
+
+	@Test
+	public void testStopJobExecution() throws Exception {
+		executeJobCreate(MY_JOB, JOB_WITH_STEP_EXECUTIONS);
+		checkForJobInList(MY_JOB, JOB_WITH_STEP_EXECUTIONS, true);
+		executemyJobFixedDelayStream("5");
+		Thread.sleep(5000);
+		Table table = (Table) executeCommand("job execution list").getResult();
+		assertTrue(!table.getRows().isEmpty());
+		String executionId = table.getRows().get(0).getValue(1);
+		String executionStatus = table.getRows().get(0).getValue(5);
+		assertTrue(executionStatus.equals("STARTING") || executionStatus.equals("STARTED"));
+		// Stop the execution by the given executionId.
+		executeCommand("job execution stop " + executionId);
+		// sleep for stop() until the step2 is invoked.
+		Thread.sleep(3000);
+		table = (Table) executeCommand("job execution list").getResult();
+		for (TableRow tr : table.getRows()) {
+			// Match by above executionId
+			if (tr.getValue(1).equals(executionId)) {
+				executionStatus = tr.getValue(5);
+				break;
+			}
+		}
+		assertEquals("STOPPED", executionStatus);
+	}
+
+	public void testStepExecutionProgress() {
+		executeJobCreate(MY_JOB, JOB_WITH_PARAMETERS_DESCRIPTOR);
+		checkForJobInList(MY_JOB, JOB_WITH_PARAMETERS_DESCRIPTOR, true);
+		executeJobLaunch(MY_JOB);
+		final Table jobExecutions = listJobExecutions();
+		String jobExecutionId = jobExecutions.getRows().get(0).getValue(1);
+
+		final Table stepExecutions = listStepExecutions(jobExecutionId);
+		String stepExecutionId = stepExecutions.getRows().get(0).getValue(1);
+
+		final Table stepExecutionProgress = getStepExecutionProgress(jobExecutionId, stepExecutionId);
+		String id = stepExecutionProgress.getRows().get(0).getValue(1);
+		String percentageComplete = stepExecutionProgress.getRows().get(0).getValue(3);
+		String duration = stepExecutionProgress.getRows().get(0).getValue(4);
+		assertEquals(stepExecutionId, id);
+		assertNotNull(percentageComplete);
+		assertNotNull(duration);
 	}
 }

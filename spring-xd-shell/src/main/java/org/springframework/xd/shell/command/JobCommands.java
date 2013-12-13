@@ -30,6 +30,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.xd.rest.client.JobOperations;
 import org.springframework.xd.rest.client.domain.JobDefinitionResource;
 import org.springframework.xd.rest.client.domain.JobExecutionInfoResource;
+import org.springframework.xd.rest.client.domain.StepExecutionInfoResource;
+import org.springframework.xd.rest.client.domain.StepExecutionProgressInfoResource;
 import org.springframework.xd.shell.XDShell;
 import org.springframework.xd.shell.util.CommonUtils;
 import org.springframework.xd.shell.util.Table;
@@ -45,7 +47,6 @@ import org.springframework.xd.shell.util.UiUtils;
  * @author Gunnar Hillert
  * 
  */
-
 @Component
 public class JobCommands implements CommandMarker {
 
@@ -55,7 +56,13 @@ public class JobCommands implements CommandMarker {
 
 	private final static String LIST_JOB_EXECUTIONS = "job execution list";
 
+	private final static String LIST_STEP_EXECUTIONS = "job execution step list";
+
+	private final static String PROGRESS_STEP_EXECUTION = "job execution step progress";
+
 	private final static String DISPLAY_JOB_EXECUTION = "job execution display";
+
+	private final static String STOP_JOB_EXECUTION = "job execution stop";
 
 	private final static String DEPLOY_JOB = "job deploy";
 
@@ -77,7 +84,7 @@ public class JobCommands implements CommandMarker {
 	@Autowired
 	private XDShell xdShell;
 
-	@CliAvailabilityIndicator({ CREATE_JOB, LIST_JOBS, DEPLOY_JOB, UNDEPLOY_JOB, DESTROY_JOB })
+	@CliAvailabilityIndicator({ CREATE_JOB, LIST_JOBS, DEPLOY_JOB, UNDEPLOY_JOB, DESTROY_JOB, STOP_JOB_EXECUTION })
 	public boolean available() {
 		return xdShell.getSpringXDOperations() != null;
 	}
@@ -146,9 +153,61 @@ public class JobCommands implements CommandMarker {
 		return table;
 	}
 
+	@CliCommand(value = LIST_STEP_EXECUTIONS, help = "List all step executions for the provided job execution id")
+	public Table listStepExecutions(
+			@CliOption(mandatory = true, key = { "", "id" }, help = "the id of the job execution") long jobExecutionId) {
+
+		final List<StepExecutionInfoResource> stepExecutions = jobOperations().listStepExecutions(jobExecutionId);
+		final Table table = new Table();
+		table.addHeader(1, new TableHeader("Id"))
+				.addHeader(2, new TableHeader("Step Name"))
+				.addHeader(3, new TableHeader("Job Exec ID"))
+				.addHeader(4, new TableHeader("Start Time (UTC)"))
+				.addHeader(5, new TableHeader("End Time (UTC)"))
+				.addHeader(6, new TableHeader("Status"));
+
+		for (StepExecutionInfoResource stepExecutionInfoResource : stepExecutions) {
+
+			final String utcStartTime = CommonUtils.getUtcTime(stepExecutionInfoResource.getStepExecution().getStartTime());
+			final String utcEndTime = CommonUtils.getUtcTime(stepExecutionInfoResource.getStepExecution().getEndTime());
+
+			final TableRow row = new TableRow();
+
+			row.addValue(1, String.valueOf(stepExecutionInfoResource.getStepExecution().getId()))
+					.addValue(2, stepExecutionInfoResource.getStepExecution().getStepName())
+					.addValue(3, String.valueOf(stepExecutionInfoResource.getJobExecutionId()))
+					.addValue(4, utcStartTime)
+					.addValue(5, utcEndTime)
+					.addValue(6, stepExecutionInfoResource.getStepExecution().getStatus().name());
+			table.getRows().add(row);
+		}
+
+		return table;
+	}
+
+	@CliCommand(value = PROGRESS_STEP_EXECUTION, help = "Get the progress info for the given step execution")
+	public Table stepExecutionProgress(
+			@CliOption(mandatory = true, key = { "", "id" }, help = "the id of the step execution") long stepExecutionId,
+			@CliOption(mandatory = true, key = { "jobExecutionId" }, help = "the job execution id") long jobExecutionId) {
+		StepExecutionProgressInfoResource progressInfoResource = jobOperations().stepExecutionProgress(jobExecutionId,
+				stepExecutionId);
+		Table table = new Table();
+		table.addHeader(1, new TableHeader("Id"))
+				.addHeader(2, new TableHeader("Step Name"))
+				.addHeader(3, new TableHeader("Percentage Complete"))
+				.addHeader(4, new TableHeader("Duration"));
+		final TableRow tableRow = new TableRow();
+		tableRow.addValue(1, String.valueOf(progressInfoResource.getStepExecution().getId()))
+				.addValue(2, String.valueOf(progressInfoResource.getStepExecution().getStepName()))
+				.addValue(3, String.format("%.0f%%", progressInfoResource.getPercentageComplete() * 100))
+				.addValue(4, String.format("%.0f ms", progressInfoResource.getDuration()));
+		table.getRows().add(tableRow);
+		return table;
+	}
+
 	@CliCommand(value = DISPLAY_JOB_EXECUTION, help = "Display the details of a Job Execution")
 	public String display(
-			@CliOption(mandatory = true, key = { "", "id" }, help = "the id of the job execution") Long jobExecutionId) {
+			@CliOption(mandatory = true, key = { "", "id" }, help = "the id of the job execution") long jobExecutionId) {
 
 		final JobExecutionInfoResource jobExecutionInfoResource = jobOperations().displayJobExecution(jobExecutionId);
 
@@ -209,6 +268,13 @@ public class JobCommands implements CommandMarker {
 		}
 
 		return details.toString();
+	}
+
+	@CliCommand(value = STOP_JOB_EXECUTION, help = "Stop the job execution that is running")
+	public String stopJobExecution(
+			@CliOption(key = { "", "id" }, help = "the id of the job execution", mandatory = true) long executionId) {
+		jobOperations().stopJobExecution(executionId);
+		return String.format("Stopped Job execution that has executionId '%s'", executionId);
 	}
 
 	@CliCommand(value = DEPLOY_JOB, help = "Deploy a previously created job")
