@@ -182,5 +182,78 @@ public class ModuleDeploymentRequest implements Comparable<ModuleDeploymentReque
 		return Integer.valueOf(this.getIndex()).compareTo(Integer.valueOf(o.getIndex()));
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((colocationGroupName == null) ? 0 : colocationGroupName.hashCode());
+		result = prime * result + ((group == null) ? 0 : group.hashCode());
+		result = prime * result + index;
+		result = prime * result + (launch ? 1231 : 1237);
+		result = prime * result + ((module == null) ? 0 : module.hashCode());
+		result = prime * result + ((parameters == null) ? 0 : parameters.hashCode());
+		result = prime * result + (remove ? 1231 : 1237);
+		result = prime * result + ((sinkChannelName == null) ? 0 : sinkChannelName.hashCode());
+		result = prime * result + ((sourceChannelName == null) ? 0 : sourceChannelName.hashCode());
+		result = prime * result + ((type == null) ? 0 : type.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ModuleDeploymentRequest other = (ModuleDeploymentRequest) obj;
+		if (colocationGroupName == null) {
+			if (other.colocationGroupName != null)
+				return false;
+		}
+		else if (!colocationGroupName.equals(other.colocationGroupName))
+			return false;
+		if (group == null) {
+			if (other.group != null)
+				return false;
+		}
+		else if (!group.equals(other.group))
+			return false;
+		if (index != other.index)
+			return false;
+		if (launch != other.launch)
+			return false;
+		if (module == null) {
+			if (other.module != null)
+				return false;
+		}
+		else if (!module.equals(other.module))
+			return false;
+		if (parameters == null) {
+			if (other.parameters != null)
+				return false;
+		}
+		else if (!parameters.equals(other.parameters))
+			return false;
+		if (remove != other.remove)
+			return false;
+		if (sinkChannelName == null) {
+			if (other.sinkChannelName != null)
+				return false;
+		}
+		else if (!sinkChannelName.equals(other.sinkChannelName))
+			return false;
+		if (sourceChannelName == null) {
+			if (other.sourceChannelName != null)
+				return false;
+		}
+		else if (!sourceChannelName.equals(other.sourceChannelName))
+			return false;
+		if (type != other.type)
+			return false;
+		return true;
+	}
+
 
 }
