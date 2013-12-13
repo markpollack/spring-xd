@@ -39,15 +39,19 @@ import org.springframework.messaging.MessageChannel;
 import org.springframework.util.Assert;
 
 /**
+ * A {@link ModuleApplicationContext} implementation backed by a Spring {@link ApplicationContext} that will bridge
+ * together the channels of a composite module in-memory so that the data that flows between them will not be sent out
+ * of process on the message bus.
+ * 
  * @author Mark Fisher
  */
-public class CompositeModule extends AbstractModule {
+public class CompositeModuleApplicationContext extends AbstractModuleApplicationContext {
 
 	private final Log logger = LogFactory.getLog(this.getClass());
 
 	private final GenericApplicationContext context = new GenericApplicationContext();
 
-	private final List<SimpleModule> modules;
+	private final List<SimpleModuleApplicationContext> modules;
 
 	private final Properties properties = new Properties();
 
@@ -55,7 +59,7 @@ public class CompositeModule extends AbstractModule {
 
 	private final AtomicBoolean isRunning = new AtomicBoolean();
 
-	public CompositeModule(String name, ModuleType type, List<SimpleModule> modules,
+	public CompositeModuleApplicationContext(String name, ModuleType type, List<SimpleModuleApplicationContext> modules,
 			DeploymentMetadata metadata) {
 		super(new ModuleDefinition(name, type), metadata);
 		this.modules = modules;
@@ -92,7 +96,7 @@ public class CompositeModule extends AbstractModule {
 		List<AbstractEndpoint> endpoints = new ArrayList<AbstractEndpoint>();
 		MessageChannel previousOutputChannel = null;
 		for (int i = 0; i < this.modules.size(); i++) {
-			SimpleModule module = this.modules.get(i);
+			SimpleModuleApplicationContext module = this.modules.get(i);
 			module.initialize();
 			MessageChannel inputChannel = module.getComponent("input", MessageChannel.class);
 			MessageChannel outputChannel = module.getComponent("output", MessageChannel.class);
@@ -177,7 +181,7 @@ public class CompositeModule extends AbstractModule {
 	public void addProperties(Properties properties) {
 		this.registerPropertySource(properties);
 		this.properties.putAll(properties);
-		for (Module module : this.modules) {
+		for (ModuleApplicationContext module : this.modules) {
 			module.addProperties(properties);
 		}
 	}
@@ -209,7 +213,7 @@ public class CompositeModule extends AbstractModule {
 
 	@Override
 	public void destroy() {
-		for (Module module : this.modules) {
+		for (ModuleApplicationContext module : this.modules) {
 			module.destroy();
 		}
 		if (this.context != null) {
@@ -226,7 +230,7 @@ public class CompositeModule extends AbstractModule {
 		Assert.state(this.context != null, "An ApplicationContext is required");
 		if (this.isRunning.compareAndSet(false, true)) {
 			for (int i = this.modules.size() - 1; i >= 0; i--) {
-				Module module = this.modules.get(i);
+				ModuleApplicationContext module = this.modules.get(i);
 				module.start();
 			}
 			this.context.start();
@@ -239,7 +243,7 @@ public class CompositeModule extends AbstractModule {
 	@Override
 	public void stop() {
 		if (this.isRunning.compareAndSet(true, false)) {
-			for (Module module : this.modules) {
+			for (ModuleApplicationContext module : this.modules) {
 				module.stop();
 			}
 			this.context.stop();

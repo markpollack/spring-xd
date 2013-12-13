@@ -612,6 +612,7 @@ project('spring-xd-hadoop') {
 		compile ("org.springframework.data:spring-data-hadoop-store:$springDataHadoopVersion") {
 			exclude group: 'org.apache.hadoop'
 		}
+		testCompile "org.kitesdk:kite-data-core:0.10.0"
 		testRuntime "org.xerial.snappy:snappy-java:1.1.0"
 	}
 }

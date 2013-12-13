@@ -36,11 +36,11 @@ import org.springframework.util.ClassUtils;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.xd.dirt.plugins.ModuleConfigurationException;
-import org.springframework.xd.module.Module;
+import org.springframework.xd.module.ModuleApplicationContext;
 import org.springframework.xd.module.ModuleType;
 import org.springframework.xd.module.Plugin;
 import org.springframework.xd.module.PluginAdapter;
-import org.springframework.xd.module.SimpleModule;
+import org.springframework.xd.module.SimpleModuleApplicationContext;
 
 
 /**
@@ -56,7 +56,7 @@ public class ModuleTypeConversionPlugin extends PluginAdapter {
 	private final DefaultContentTypeAwareConverterRegistry converterRegistry = new DefaultContentTypeAwareConverterRegistry();
 
 	@Override
-	public void postProcessModule(Module module) {
+	public void postProcessModule(ModuleApplicationContext module) {
 		String outputType = null;
 		String inputType = null;
 		if (module.getType() == ModuleType.source || module.getType() == ModuleType.processor) {
@@ -77,20 +77,20 @@ public class ModuleTypeConversionPlugin extends PluginAdapter {
 	}
 
 
-	private void registerConversionService(Module module, ConversionService conversionService) {
-		if (module instanceof SimpleModule) {
-			SimpleModule sm = (SimpleModule) module;
+	private void registerConversionService(ModuleApplicationContext module, ConversionService conversionService) {
+		if (module instanceof SimpleModuleApplicationContext) {
+			SimpleModuleApplicationContext sm = (SimpleModuleApplicationContext) module;
 			ConfigurableApplicationContext applicationContext = (ConfigurableApplicationContext) sm.getApplicationContext();
 			applicationContext.getBeanFactory().registerSingleton("conversionService", conversionService);
 		}
 	}
 
-	private void configureModuleConverters(String contentTypeString, Module module,
+	private void configureModuleConverters(String contentTypeString, ModuleApplicationContext module,
 			ConfigurableConversionService conversionService, boolean isInput) {
 		if (logger.isDebugEnabled()) {
 			logger.debug("module " + (isInput ? "input" : "output") + "Type is " + contentTypeString);
 		}
-		SimpleModule sm = (SimpleModule) module;
+		SimpleModuleApplicationContext sm = (SimpleModuleApplicationContext) module;
 		try {
 			MediaType contentType = resolveContentType(contentTypeString, module);
 			AbstractMessageChannel channel = null;
@@ -146,7 +146,7 @@ public class ModuleTypeConversionPlugin extends PluginAdapter {
 		}
 	}
 
-	private MediaType resolveContentType(String type, Module module) throws ClassNotFoundException, LinkageError {
+	private MediaType resolveContentType(String type, ModuleApplicationContext module) throws ClassNotFoundException, LinkageError {
 		if (!type.contains("/")) {
 			Class<?> javaType = resolveJavaType(type, module);
 			return MediaType.valueOf("application/x-java-object;type=" + javaType.getName());
@@ -154,8 +154,8 @@ public class ModuleTypeConversionPlugin extends PluginAdapter {
 		return MediaType.valueOf(type);
 	}
 
-	private Class<?> resolveJavaType(String type, Module module) throws ClassNotFoundException, LinkageError {
-		SimpleModule sm = (SimpleModule) module;
+	private Class<?> resolveJavaType(String type, ModuleApplicationContext module) throws ClassNotFoundException, LinkageError {
+		SimpleModuleApplicationContext sm = (SimpleModuleApplicationContext) module;
 		return ClassUtils.forName(type, sm.getApplicationContext().getClassLoader());
 	}
 

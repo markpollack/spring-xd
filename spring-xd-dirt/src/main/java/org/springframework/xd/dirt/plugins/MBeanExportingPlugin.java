@@ -20,7 +20,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.xd.dirt.container.XDContainer;
 import org.springframework.xd.dirt.server.options.XDPropertyKeys;
 import org.springframework.xd.module.BeanDefinitionAddingPostProcessor;
-import org.springframework.xd.module.Module;
+import org.springframework.xd.module.ModuleApplicationContext;
 import org.springframework.xd.module.Plugin;
 
 /**
@@ -36,7 +36,7 @@ public class MBeanExportingPlugin implements Plugin {
 	private boolean jmxEnabled;
 
 	@Override
-	public void preProcessModule(Module module) {
+	public void preProcessModule(ModuleApplicationContext module) {
 
 		if (jmxEnabled) {
 			module.addComponents(new ClassPathResource(CONTEXT_CONFIG_ROOT + "mbean-exporters.xml"));
@@ -49,15 +49,15 @@ public class MBeanExportingPlugin implements Plugin {
 	}
 
 	@Override
-	public void postProcessModule(Module module) {
+	public void postProcessModule(ModuleApplicationContext module) {
 	}
 
 	@Override
-	public void beforeShutdown(Module module) {
+	public void beforeShutdown(ModuleApplicationContext module) {
 	}
 
 	@Override
-	public void removeModule(Module module) {
+	public void removeModule(ModuleApplicationContext module) {
 	}
 
 	@Override

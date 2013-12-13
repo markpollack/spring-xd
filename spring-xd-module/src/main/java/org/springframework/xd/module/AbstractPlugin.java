@@ -46,10 +46,10 @@ public abstract class AbstractPlugin implements Plugin {
 	}
 
 	/**
-	 * Process the {@link Module} and add the Application Context resources necessary to setup the Batch Job.
+	 * Process the {@link ModuleApplicationContext} and add the Application Context resources necessary to setup the Batch Job.
 	 **/
 	@Override
-	public final void preProcessModule(Module module) {
+	public final void preProcessModule(ModuleApplicationContext module) {
 		Assert.notNull(module, "module cannot be null");
 		List<String> componentPaths = componentPathsSelector(module);
 		for (String path : componentPaths) {
@@ -64,7 +64,7 @@ public abstract class AbstractPlugin implements Plugin {
 	 * 
 	 * @param module
 	 */
-	protected void preProcessModuleInternal(Module module) {
+	protected void preProcessModuleInternal(ModuleApplicationContext module) {
 	}
 
 
@@ -73,7 +73,7 @@ public abstract class AbstractPlugin implements Plugin {
 	 * 
 	 * @param module
 	 */
-	protected void postProcessModuleInternal(Module module) {
+	protected void postProcessModuleInternal(ModuleApplicationContext module) {
 	}
 
 	/**
@@ -83,14 +83,14 @@ public abstract class AbstractPlugin implements Plugin {
 	 * @param module The module that is being initialized
 	 * @return The list of paths
 	 */
-	protected abstract List<String> componentPathsSelector(Module module);
+	protected abstract List<String> componentPathsSelector(ModuleApplicationContext module);
 
 	/**
 	 * set the properties required for the module based on its type.
 	 * 
 	 * @param module The module that is being initialized
 	 */
-	protected abstract void configureProperties(Module module);
+	protected abstract void configureProperties(ModuleApplicationContext module);
 
 	@Override
 	public void preProcessSharedContext(ConfigurableApplicationContext context) {
@@ -100,7 +100,7 @@ public abstract class AbstractPlugin implements Plugin {
 	}
 
 
-	private void addComponents(Module module, String path) {
+	private void addComponents(ModuleApplicationContext module, String path) {
 		module.addComponents(new ClassPathResource(path));
 	}
 

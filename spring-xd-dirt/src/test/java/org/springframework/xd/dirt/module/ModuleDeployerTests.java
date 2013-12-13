@@ -32,7 +32,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.GenericMessage;
-import org.springframework.xd.module.Module;
+import org.springframework.xd.module.ModuleApplicationContext;
 import org.springframework.xd.module.ModuleType;
 import org.springframework.xd.module.Plugin;
 
@@ -85,7 +85,7 @@ public class ModuleDeployerTests {
 		private ApplicationContext moduleCommonContext;
 
 		@Override
-		public void preProcessModule(Module module) {
+		public void preProcessModule(ModuleApplicationContext module) {
 			assertEquals("module commonContext should not contain any Plugins", 0,
 					moduleCommonContext.getBeansOfType(Plugin.class).size());
 			Properties properties = new Properties();
@@ -94,15 +94,15 @@ public class ModuleDeployerTests {
 		}
 
 		@Override
-		public void postProcessModule(Module module) {
+		public void postProcessModule(ModuleApplicationContext module) {
 		}
 
 		@Override
-		public void beforeShutdown(Module module) {
+		public void beforeShutdown(ModuleApplicationContext module) {
 		}
 
 		@Override
-		public void removeModule(Module module) {
+		public void removeModule(ModuleApplicationContext module) {
 
 		}
 

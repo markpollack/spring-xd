@@ -16,17 +16,17 @@
 
 package org.springframework.xd.dirt.event;
 
-import org.springframework.xd.module.Module;
+import org.springframework.xd.module.ModuleApplicationContext;
 
 /**
  * @author Mark Fisher
  */
 @SuppressWarnings("serial")
-public abstract class AbstractModuleEvent extends AbstractEvent<Module> {
+public abstract class AbstractModuleEvent extends AbstractEvent<ModuleApplicationContext> {
 
 	private final String containerId;
 
-	public AbstractModuleEvent(Module module, String containerId) {
+	public AbstractModuleEvent(ModuleApplicationContext module, String containerId) {
 		super(module);
 		this.containerId = containerId;
 	}
@@ -43,7 +43,7 @@ public abstract class AbstractModuleEvent extends AbstractEvent<Module> {
 		sb.append(",");
 		AbstractModuleEvent e = this;
 		sb.append("\"container\":\"" + e.getContainerId() + "\",");
-		Module m = e.getSource();
+		ModuleApplicationContext m = e.getSource();
 		sb.append("\"source\":{\"name\":\"" + m.getName() + "\",");
 		sb.append("\"type\":\"" + m.getType() + "\",");
 		sb.append("\"running\":" + m.isRunning());

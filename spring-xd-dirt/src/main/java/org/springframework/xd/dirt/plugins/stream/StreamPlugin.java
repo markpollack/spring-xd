@@ -41,7 +41,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.xd.dirt.container.XDContainer;
 import org.springframework.xd.module.BeanDefinitionAddingPostProcessor;
 import org.springframework.xd.module.DeploymentMetadata;
-import org.springframework.xd.module.Module;
+import org.springframework.xd.module.ModuleApplicationContext;
 import org.springframework.xd.module.ModuleType;
 import org.springframework.xd.module.Plugin;
 
@@ -69,7 +69,7 @@ public class StreamPlugin implements Plugin {
 	private static final String TOPIC_CHANNEL_PREFIX = "topic:";
 
 	@Override
-	public void preProcessModule(Module module) {
+	public void preProcessModule(ModuleApplicationContext module) {
 		ModuleType type = module.getType();
 		DeploymentMetadata md = module.getDeploymentMetadata();
 		if (source == type || processor == type || sink == type) {
@@ -81,13 +81,13 @@ public class StreamPlugin implements Plugin {
 	}
 
 	@Override
-	public void postProcessModule(Module module) {
+	public void postProcessModule(ModuleApplicationContext module) {
 		MessageBus bus = findMessageBus(module);
 		bindConsumer(module, bus);
 		bindProducers(module, bus);
 	}
 
-	private MessageBus findMessageBus(Module module) {
+	private MessageBus findMessageBus(ModuleApplicationContext module) {
 		MessageBus messageBus = null;
 		try {
 			messageBus = module.getComponent(MessageBus.class);
@@ -98,7 +98,7 @@ public class StreamPlugin implements Plugin {
 		return messageBus;
 	}
 
-	private void bindConsumer(Module module, MessageBus bus) {
+	private void bindConsumer(ModuleApplicationContext module, MessageBus bus) {
 		DeploymentMetadata md = module.getDeploymentMetadata();
 		MessageChannel channel = module.getComponent("input", MessageChannel.class);
 		if (channel != null) {
@@ -112,7 +112,7 @@ public class StreamPlugin implements Plugin {
 		}
 	}
 
-	private void bindProducers(Module module, MessageBus bus) {
+	private void bindProducers(ModuleApplicationContext module, MessageBus bus) {
 		DeploymentMetadata md = module.getDeploymentMetadata();
 		MessageChannel channel = module.getComponent("output", MessageChannel.class);
 		if (channel != null) {
@@ -146,7 +146,7 @@ public class StreamPlugin implements Plugin {
 	}
 
 	@Override
-	public void beforeShutdown(Module module) {
+	public void beforeShutdown(ModuleApplicationContext module) {
 		MessageBus bus = findMessageBus(module);
 		if (bus != null) {
 			unbindConsumer(module, bus);
@@ -155,17 +155,17 @@ public class StreamPlugin implements Plugin {
 	}
 
 	@Override
-	public void removeModule(Module module) {
+	public void removeModule(ModuleApplicationContext module) {
 	}
 
-	private void unbindConsumer(Module module, MessageBus bus) {
+	private void unbindConsumer(ModuleApplicationContext module, MessageBus bus) {
 		MessageChannel inputChannel = module.getComponent("input", MessageChannel.class);
 		if (inputChannel != null) {
 			bus.unbindConsumer(module.getDeploymentMetadata().getInputChannelName(), inputChannel);
 		}
 	}
 
-	private void unbindProducers(Module module, MessageBus bus) {
+	private void unbindProducers(ModuleApplicationContext module, MessageBus bus) {
 		MessageChannel outputChannel = module.getComponent("output", MessageChannel.class);
 		if (outputChannel != null) {
 			bus.unbindProducer(module.getDeploymentMetadata().getOutputChannelName(), outputChannel);
@@ -173,7 +173,7 @@ public class StreamPlugin implements Plugin {
 		bus.unbindProducers(getTapChannelName(module));
 	}
 
-	private String getTapChannelName(Module module) {
+	private String getTapChannelName(ModuleApplicationContext module) {
 		return TAP_CHANNEL_PREFIX + module.getDeploymentMetadata().getGroup() + "." + module.getName();
 	}
 
@@ -182,7 +182,7 @@ public class StreamPlugin implements Plugin {
 				&& (channelName.startsWith(TAP_CHANNEL_PREFIX) || channelName.startsWith(TOPIC_CHANNEL_PREFIX));
 	}
 
-	private Collection<MediaType> getAcceptedMediaTypes(Module module) {
+	private Collection<MediaType> getAcceptedMediaTypes(ModuleApplicationContext module) {
 		Collection<?> acceptedTypes = module.getComponent(CONTENT_TYPE_BEAN_NAME, Collection.class);
 
 		if (CollectionUtils.isEmpty(acceptedTypes)) {

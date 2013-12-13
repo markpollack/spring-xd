@@ -34,11 +34,11 @@ import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
 import org.springframework.messaging.SubscribableChannel;
 import org.springframework.messaging.support.MessageBuilder;
-import org.springframework.xd.module.CompositeModule;
+import org.springframework.xd.module.CompositeModuleApplicationContext;
 import org.springframework.xd.module.DeploymentMetadata;
 import org.springframework.xd.module.ModuleDefinition;
 import org.springframework.xd.module.ModuleType;
-import org.springframework.xd.module.SimpleModule;
+import org.springframework.xd.module.SimpleModuleApplicationContext;
 
 /**
  * @author Mark Fisher
@@ -67,21 +67,21 @@ public class CompositeModuleTests {
 	@Test
 	public void testCompositeSource() {
 		DeploymentMetadata metadata = new DeploymentMetadata("compositesourcegroup", 0);
-		List<SimpleModule> modules = new ArrayList<SimpleModule>();
-		modules.add(new SimpleModule(sourceDefinition, metadata));
-		modules.add(new SimpleModule(processor1Definition, metadata));
-		modules.add(new SimpleModule(processor2Definition, metadata));
-		CompositeModule module = new CompositeModule("compositesource", ModuleType.source, modules, metadata);
+		List<SimpleModuleApplicationContext> modules = new ArrayList<SimpleModuleApplicationContext>();
+		modules.add(new SimpleModuleApplicationContext(sourceDefinition, metadata));
+		modules.add(new SimpleModuleApplicationContext(processor1Definition, metadata));
+		modules.add(new SimpleModuleApplicationContext(processor2Definition, metadata));
+		CompositeModuleApplicationContext module = new CompositeModuleApplicationContext("compositesource", ModuleType.source, modules, metadata);
 		assertEquals(source, module.getType());
 	}
 
 	@Test
 	public void testCompositeProcessor() {
 		DeploymentMetadata metadata = new DeploymentMetadata("compositeprocessorgroup", 1);
-		List<SimpleModule> modules = new ArrayList<SimpleModule>();
-		modules.add(new SimpleModule(processor1Definition, metadata));
-		modules.add(new SimpleModule(processor2Definition, metadata));
-		CompositeModule module = new CompositeModule("compositeprocessor", ModuleType.processor, modules, metadata);
+		List<SimpleModuleApplicationContext> modules = new ArrayList<SimpleModuleApplicationContext>();
+		modules.add(new SimpleModuleApplicationContext(processor1Definition, metadata));
+		modules.add(new SimpleModuleApplicationContext(processor2Definition, metadata));
+		CompositeModuleApplicationContext module = new CompositeModuleApplicationContext("compositeprocessor", ModuleType.processor, modules, metadata);
 		module.initialize();
 		module.start();
 		assertEquals(processor, module.getType());
@@ -105,11 +105,11 @@ public class CompositeModuleTests {
 	@Test
 	public void testCompositeSink() {
 		DeploymentMetadata metadata = new DeploymentMetadata("compositesinkgroup", 2);
-		List<SimpleModule> modules = new ArrayList<SimpleModule>();
-		modules.add(new SimpleModule(processor1Definition, metadata));
-		modules.add(new SimpleModule(processor2Definition, metadata));
-		modules.add(new SimpleModule(sinkDefinition, metadata));
-		CompositeModule module = new CompositeModule("compositesink", ModuleType.sink, modules, metadata);
+		List<SimpleModuleApplicationContext> modules = new ArrayList<SimpleModuleApplicationContext>();
+		modules.add(new SimpleModuleApplicationContext(processor1Definition, metadata));
+		modules.add(new SimpleModuleApplicationContext(processor2Definition, metadata));
+		modules.add(new SimpleModuleApplicationContext(sinkDefinition, metadata));
+		CompositeModuleApplicationContext module = new CompositeModuleApplicationContext("compositesink", ModuleType.sink, modules, metadata);
 		assertEquals(sink, module.getType());
 	}
 

@@ -41,7 +41,7 @@ import org.springframework.xd.dirt.server.SingleNodeApplication;
 import org.springframework.xd.dirt.stream.dsl.ModuleNode;
 import org.springframework.xd.dirt.stream.dsl.StreamConfigParser;
 import org.springframework.xd.dirt.stream.dsl.StreamNode;
-import org.springframework.xd.module.Module;
+import org.springframework.xd.module.ModuleApplicationContext;
 
 /**
  * @author Mark Fisher
@@ -136,13 +136,13 @@ public abstract class AbstractStreamDeploymentIntegrationTests {
 
 	protected abstract void cleanup(ApplicationContext context);
 
-	protected Module getModule(String moduleName, int index) {
+	protected ModuleApplicationContext getModule(String moduleName, int index) {
 
-		final Map<String, Map<Integer, Module>> deployedModules = this.moduleEventListener.getDeployedModules();
+		final Map<String, Map<Integer, ModuleApplicationContext>> deployedModules = this.moduleEventListener.getDeployedModules();
 
-		Module matchedModule = null;
-		for (Entry<String, Map<Integer, Module>> entry : deployedModules.entrySet()) {
-			final Module module = entry.getValue().get(index);
+		ModuleApplicationContext matchedModule = null;
+		for (Entry<String, Map<Integer, ModuleApplicationContext>> entry : deployedModules.entrySet()) {
+			final ModuleApplicationContext module = entry.getValue().get(index);
 			if (module != null && moduleName.equals(module.getName())) {
 				matchedModule = module;
 				break;
@@ -164,7 +164,7 @@ public abstract class AbstractStreamDeploymentIntegrationTests {
 			done = true;
 			int i = 0;
 			for (ModuleNode module : stream.getModuleNodes()) {
-				Module deployedModule = getModule(module.getName(), i++);
+				ModuleApplicationContext deployedModule = getModule(module.getName(), i++);
 
 				done = (isDeploy) ? deployedModule != null : deployedModule == null;
 				if (!done) {
@@ -199,14 +199,14 @@ public abstract class AbstractStreamDeploymentIntegrationTests {
 
 	static class ModuleEventListener implements ApplicationListener<AbstractModuleEvent> {
 
-		private final ConcurrentMap<String, Map<Integer, Module>> deployedModules = new ConcurrentHashMap<String, Map<Integer, Module>>();
+		private final ConcurrentMap<String, Map<Integer, ModuleApplicationContext>> deployedModules = new ConcurrentHashMap<String, Map<Integer, ModuleApplicationContext>>();
 
 		@Override
 		public void onApplicationEvent(AbstractModuleEvent event) {
-			Module module = event.getSource();
+			ModuleApplicationContext module = event.getSource();
 			if (event.getType().equals("ModuleDeployed")) {
 				this.deployedModules.putIfAbsent(module.getDeploymentMetadata().getGroup(),
-						new HashMap<Integer, Module>());
+						new HashMap<Integer, ModuleApplicationContext>());
 				this.deployedModules.get(module.getDeploymentMetadata().getGroup()).put(
 						module.getDeploymentMetadata().getIndex(), module);
 			}
@@ -216,7 +216,7 @@ public abstract class AbstractStreamDeploymentIntegrationTests {
 			}
 		}
 
-		public Map<String, Map<Integer, Module>> getDeployedModules() {
+		public Map<String, Map<Integer, ModuleApplicationContext>> getDeployedModules() {
 			return this.deployedModules;
 		}
 

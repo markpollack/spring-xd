@@ -35,8 +35,8 @@ import org.springframework.xd.dirt.module.ModuleDefinitionRepository;
 import org.springframework.xd.dirt.module.ModuleDeployer;
 import org.springframework.xd.dirt.module.ResourceModuleRegistry;
 import org.springframework.xd.dirt.server.SingleNodeApplication;
-import org.springframework.xd.module.CompositeModule;
-import org.springframework.xd.module.Module;
+import org.springframework.xd.module.CompositeModuleApplicationContext;
+import org.springframework.xd.module.ModuleApplicationContext;
 
 
 /**
@@ -93,41 +93,41 @@ public class StreamTestSupport {
 		streamDeployer.delete(name);
 	}
 
-	protected static Module getDeployedModule(String streamName, int index) {
-		Map<Integer, Module> streamModules = getStreamModules(streamName);
+	protected static ModuleApplicationContext getDeployedModule(String streamName, int index) {
+		Map<Integer, ModuleApplicationContext> streamModules = getStreamModules(streamName);
 		return streamModules.get(index);
 	}
 
-	protected static Module getDeployedSource(String streamName) {
-		Map<Integer, Module> streamModules = getStreamModules(streamName);
+	protected static ModuleApplicationContext getDeployedSource(String streamName) {
+		Map<Integer, ModuleApplicationContext> streamModules = getStreamModules(streamName);
 		return streamModules.get(0);
 	}
 
-	protected static Module getDeployedSink(String streamName) {
-		Map<Integer, Module> streamModules = getStreamModules(streamName);
+	protected static ModuleApplicationContext getDeployedSink(String streamName) {
+		Map<Integer, ModuleApplicationContext> streamModules = getStreamModules(streamName);
 		return streamModules.get(streamModules.size() - 1);
 	}
 
-	protected static Map<Integer, Module> getStreamModules(String streamName) {
-		Map<String, Map<Integer, Module>> deployedModules = moduleDeployer.getDeployedModules();
+	protected static Map<Integer, ModuleApplicationContext> getStreamModules(String streamName) {
+		Map<String, Map<Integer, ModuleApplicationContext>> deployedModules = moduleDeployer.getDeployedModules();
 		Assert.notNull(deployedModules.get(streamName), "Stream '" + streamName + "' apparently is not deployed");
 		return deployedModules.get(streamName);
 	}
 
 	protected static MessageChannel getSourceOutputChannel(String streamName) {
-		Module source = getDeployedSource(streamName);
-		if (source instanceof CompositeModule) {
-			source = (Module) TestUtils.getPropertyValue(source, "modules", List.class).get(0);
+		ModuleApplicationContext source = getDeployedSource(streamName);
+		if (source instanceof CompositeModuleApplicationContext) {
+			source = (ModuleApplicationContext) TestUtils.getPropertyValue(source, "modules", List.class).get(0);
 		}
 		return source.getComponent("output", MessageChannel.class);
 	}
 
 	protected static SubscribableChannel getSinkInputChannel(String streamName) {
-		Module sink = getDeployedSink(streamName);
+		ModuleApplicationContext sink = getDeployedSink(streamName);
 		// Should be a publish-subscribe-channel
-		if (sink instanceof CompositeModule) {
+		if (sink instanceof CompositeModuleApplicationContext) {
 			@SuppressWarnings("unchecked")
-			List<Module> modules = TestUtils.getPropertyValue(sink, "modules", List.class);
+			List<ModuleApplicationContext> modules = TestUtils.getPropertyValue(sink, "modules", List.class);
 			sink = modules.get(modules.size() - 1);
 		}
 		return sink.getComponent("input", SubscribableChannel.class);

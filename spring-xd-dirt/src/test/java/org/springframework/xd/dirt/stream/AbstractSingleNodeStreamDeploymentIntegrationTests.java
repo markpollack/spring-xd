@@ -27,7 +27,7 @@ import org.springframework.integration.support.MessageBuilder;
 import org.springframework.integration.x.bus.MessageBus;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.GenericMessage;
-import org.springframework.xd.module.Module;
+import org.springframework.xd.module.ModuleApplicationContext;
 
 
 /**
@@ -77,7 +77,7 @@ public abstract class AbstractSingleNodeStreamDeploymentIntegrationTests extends
 		Thread.sleep(1000);
 		assertEquals(2, streamRepository.count());
 
-		final Module module = getModule("bridge", 0);
+		final ModuleApplicationContext module = getModule("bridge", 0);
 
 		MessageBus bus = module.getComponent(MessageBus.class);
 
@@ -110,7 +110,7 @@ public abstract class AbstractSingleNodeStreamDeploymentIntegrationTests extends
 		assertEquals(1, streamRepository.count());
 		assertModuleRequest("router", false);
 
-		final Module module = getModule("router", 0);
+		final ModuleApplicationContext module = getModule("router", 0);
 		MessageBus bus = module.getComponent(MessageBus.class);
 
 		QueueChannel fooChannel = new QueueChannel();

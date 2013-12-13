@@ -26,7 +26,7 @@ import org.springframework.integration.support.MessageBuilder;
 import org.springframework.integration.x.bus.MessageBus;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
-import org.springframework.xd.module.Module;
+import org.springframework.xd.module.ModuleApplicationContext;
 
 /**
  * @author Mark Fisher
@@ -45,7 +45,7 @@ public class LocalSingleNodeStreamDeploymentIntegrationTests extends AbstractSin
 		streamDefinitionRepository.save(routerDefinition);
 		streamDeployer.deploy("routerDefinition");
 		Thread.sleep(1000);
-		final Module module = getModule("router", 0);
+		final ModuleApplicationContext module = getModule("router", 0);
 		MessageBus bus = module.getComponent(MessageBus.class);
 
 		MessageChannel x = module.getComponent("queue:x", MessageChannel.class);

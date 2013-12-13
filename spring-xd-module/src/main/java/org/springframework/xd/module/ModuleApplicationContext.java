@@ -23,11 +23,13 @@ import org.springframework.context.Lifecycle;
 import org.springframework.core.io.Resource;
 
 /**
+ * Represents the application context that will be used to run a module.
+ * 
  * @author Mark Fisher
  * @author David Turanski
  * @author Gary Russell
  */
-public interface Module extends Lifecycle {
+public interface ModuleApplicationContext extends Lifecycle {
 
 	void initialize();
 

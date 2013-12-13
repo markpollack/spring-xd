@@ -39,10 +39,10 @@ import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.xd.dirt.server.AdminServerApplication;
 import org.springframework.xd.module.DeploymentMetadata;
-import org.springframework.xd.module.Module;
+import org.springframework.xd.module.ModuleApplicationContext;
 import org.springframework.xd.module.ModuleDefinition;
 import org.springframework.xd.module.ModuleType;
-import org.springframework.xd.module.SimpleModule;
+import org.springframework.xd.module.SimpleModuleApplicationContext;
 
 /**
  * 
@@ -93,7 +93,7 @@ public class JobPluginTests {
 
 	@Test
 	public void streamPropertiesAdded() {
-		Module module = new SimpleModule(new ModuleDefinition("testJob", ModuleType.job),
+		ModuleApplicationContext module = new SimpleModuleApplicationContext(new ModuleDefinition("testJob", ModuleType.job),
 				new DeploymentMetadata(
 						"foo", 0));
 
@@ -112,7 +112,7 @@ public class JobPluginTests {
 	@Test
 	public void streamComponentsAdded() {
 
-		Module module = Mockito.mock(Module.class);
+		ModuleApplicationContext module = Mockito.mock(ModuleApplicationContext.class);
 		Mockito.when(module.getType()).thenReturn(ModuleType.job);
 		Properties properties = new Properties();
 		Mockito.when(module.getProperties()).thenReturn(properties);

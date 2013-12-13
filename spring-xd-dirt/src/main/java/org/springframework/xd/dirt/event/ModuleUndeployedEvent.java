@@ -16,7 +16,7 @@
 
 package org.springframework.xd.dirt.event;
 
-import org.springframework.xd.module.Module;
+import org.springframework.xd.module.ModuleApplicationContext;
 
 /**
  * @author Mark Fisher
@@ -24,7 +24,7 @@ import org.springframework.xd.module.Module;
 @SuppressWarnings("serial")
 public class ModuleUndeployedEvent extends AbstractModuleEvent {
 
-	public ModuleUndeployedEvent(Module module, String containerId) {
+	public ModuleUndeployedEvent(ModuleApplicationContext module, String containerId) {
 		super(module, containerId);
 	}
 

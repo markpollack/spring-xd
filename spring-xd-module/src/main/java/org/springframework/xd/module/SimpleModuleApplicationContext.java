@@ -44,14 +44,14 @@ import org.springframework.xd.module.options.DefaultModuleOptionsMetadata;
 import org.springframework.xd.module.options.ModuleOptions;
 
 /**
- * A {@link Module} implementation backed by a Spring {@link ApplicationContext}.
+ * A {@link ModuleApplicationContext} implementation backed by a Spring {@link ApplicationContext}.
  * 
  * @author Mark Fisher
  * @author David Turanski
  * @author Gary Russell
  * @author Dave Syer
  */
-public class SimpleModule extends AbstractModule {
+public class SimpleModuleApplicationContext extends AbstractModuleApplicationContext {
 
 	private final Log logger = LogFactory.getLog(this.getClass());
 
@@ -67,7 +67,7 @@ public class SimpleModule extends AbstractModule {
 
 	private ConfigurableApplicationContext parent;
 
-	public SimpleModule(ModuleDefinition definition, DeploymentMetadata metadata) {
+	public SimpleModuleApplicationContext(ModuleDefinition definition, DeploymentMetadata metadata) {
 		this(definition, metadata, null, defaultModuleOptions());
 	}
 
@@ -80,7 +80,7 @@ public class SimpleModule extends AbstractModule {
 		}
 	}
 
-	public SimpleModule(ModuleDefinition definition, DeploymentMetadata metadata, ClassLoader classLoader,
+	public SimpleModuleApplicationContext(ModuleDefinition definition, DeploymentMetadata metadata, ClassLoader classLoader,
 			ModuleOptions moduleOptions) {
 		super(definition, metadata);
 		application = new SpringApplicationBuilder().sources(PropertyPlaceholderAutoConfiguration.class).web(false);

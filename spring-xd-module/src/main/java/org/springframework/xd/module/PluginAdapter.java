@@ -26,19 +26,19 @@ import org.springframework.context.ConfigurableApplicationContext;
 public class PluginAdapter implements Plugin {
 
 	@Override
-	public void preProcessModule(Module module) {
+	public void preProcessModule(ModuleApplicationContext module) {
 	}
 
 	@Override
-	public void postProcessModule(Module module) {
+	public void postProcessModule(ModuleApplicationContext module) {
 	}
 
 	@Override
-	public void removeModule(Module module) {
+	public void removeModule(ModuleApplicationContext module) {
 	}
 
 	@Override
-	public void beforeShutdown(Module module) {
+	public void beforeShutdown(ModuleApplicationContext module) {
 	}
 
 	@Override

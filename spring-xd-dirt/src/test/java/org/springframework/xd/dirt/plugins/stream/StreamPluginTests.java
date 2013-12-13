@@ -43,10 +43,10 @@ import org.springframework.messaging.MessageChannel;
 import org.springframework.xd.dirt.server.options.XDPropertyKeys;
 import org.springframework.xd.module.BeanDefinitionAddingPostProcessor;
 import org.springframework.xd.module.DeploymentMetadata;
-import org.springframework.xd.module.Module;
+import org.springframework.xd.module.ModuleApplicationContext;
 import org.springframework.xd.module.ModuleDefinition;
 import org.springframework.xd.module.ModuleType;
-import org.springframework.xd.module.SimpleModule;
+import org.springframework.xd.module.SimpleModuleApplicationContext;
 
 /**
  * @author Mark Fisher
@@ -73,7 +73,7 @@ public class StreamPluginTests {
 
 	@Test
 	public void streamPropertiesAdded() {
-		Module module = new SimpleModule(new ModuleDefinition("testsource", ModuleType.source),
+		ModuleApplicationContext module = new SimpleModuleApplicationContext(new ModuleDefinition("testsource", ModuleType.source),
 				new DeploymentMetadata("foo", 0));
 		module.initialize();
 		assertEquals(0, module.getProperties().size());
@@ -86,7 +86,7 @@ public class StreamPluginTests {
 
 	@Test
 	public void streamChannelTests() {
-		Module module = mock(Module.class);
+		ModuleApplicationContext module = mock(ModuleApplicationContext.class);
 		when(module.getDeploymentMetadata()).thenReturn(new DeploymentMetadata("foo", 1));
 		when(module.getType()).thenReturn(ModuleType.processor);
 		final MessageBus bus = mock(MessageBus.class);
@@ -117,7 +117,7 @@ public class StreamPluginTests {
 
 	@Test
 	public void testTapOnProxy() {
-		Module module = mock(Module.class);
+		ModuleApplicationContext module = mock(ModuleApplicationContext.class);
 		when(module.getDeploymentMetadata()).thenReturn(new DeploymentMetadata("foo", 1));
 		MessageBus messageBus = mock(MessageBus.class);
 		when(module.getComponent(MessageBus.class)).thenReturn(messageBus);

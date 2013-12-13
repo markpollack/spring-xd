@@ -34,7 +34,7 @@ import org.springframework.messaging.MessageChannel;
 import org.springframework.xd.dirt.container.XDContainer;
 import org.springframework.xd.module.AbstractPlugin;
 import org.springframework.xd.module.DeploymentMetadata;
-import org.springframework.xd.module.Module;
+import org.springframework.xd.module.ModuleApplicationContext;
 import org.springframework.xd.module.ModuleType;
 
 /**
@@ -80,7 +80,7 @@ public class JobPlugin extends AbstractPlugin {
 	private final static Collection<MediaType> DEFAULT_ACCEPTED_CONTENT_TYPES = Collections.singletonList(MediaType.ALL);
 
 	@Override
-	public void configureProperties(Module module) {
+	public void configureProperties(ModuleApplicationContext module) {
 		final Properties properties = new Properties();
 		properties.setProperty("xd.stream.name", module.getDeploymentMetadata().getGroup());
 
@@ -101,7 +101,7 @@ public class JobPlugin extends AbstractPlugin {
 	}
 
 	@Override
-	public void postProcessModule(Module module) {
+	public void postProcessModule(ModuleApplicationContext module) {
 		MessageBus bus = findMessageBus(module);
 		DeploymentMetadata md = module.getDeploymentMetadata();
 		if (bus != null) {
@@ -120,7 +120,7 @@ public class JobPlugin extends AbstractPlugin {
 		}
 	}
 
-	private MessageBus findMessageBus(Module module) {
+	private MessageBus findMessageBus(ModuleApplicationContext module) {
 		MessageBus messageBus = null;
 		try {
 			messageBus = module.getComponent(MessageBus.class);
@@ -132,11 +132,11 @@ public class JobPlugin extends AbstractPlugin {
 	}
 
 	@Override
-	public void beforeShutdown(Module module) {
+	public void beforeShutdown(ModuleApplicationContext module) {
 	}
 
 	@Override
-	public void removeModule(Module module) {
+	public void removeModule(ModuleApplicationContext module) {
 		MessageBus bus = findMessageBus(module);
 		if (bus != null) {
 			bus.unbindConsumers(JOB_CHANNEL_PREFIX + module.getDeploymentMetadata().getGroup());
@@ -145,7 +145,7 @@ public class JobPlugin extends AbstractPlugin {
 	}
 
 	@Override
-	public List<String> componentPathsSelector(Module module) {
+	public List<String> componentPathsSelector(ModuleApplicationContext module) {
 		List<String> result = new ArrayList<String>();
 		if (module.getType() != ModuleType.job) {
 			return result;
@@ -154,7 +154,7 @@ public class JobPlugin extends AbstractPlugin {
 		return result;
 	}
 
-	public void launch(Module module, Map<String, String> parameters) {
+	public void launch(ModuleApplicationContext module, Map<String, String> parameters) {
 		MessageChannel inputChannel = module.getComponent(JOB_LAUNCH_REQUEST_CHANNEL, MessageChannel.class);
 		String payloadJSON =
 				(parameters != null && parameters.get(JOB_PARAMETERS_KEY) != null) ? parameters.get(JOB_PARAMETERS_KEY)
