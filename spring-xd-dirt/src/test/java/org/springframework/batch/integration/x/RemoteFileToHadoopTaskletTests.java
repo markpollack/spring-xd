@@ -61,7 +61,7 @@ public class RemoteFileToHadoopTaskletTests {
 	}
 
 	@Test
-	@SuppressWarnings({"unchecked", "rawtypes"})
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void testWrite() throws Exception {
 		File file = new File(tmpDir, "foo.txt");
 		file.delete();
@@ -102,8 +102,6 @@ public class RemoteFileToHadoopTaskletTests {
 		stream.readFully(out);
 		stream.close();
 		assertEquals("foobarbaz", new String(out));
-
-		fs.close();
 	}
 
 }

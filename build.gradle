@@ -1441,6 +1441,9 @@ project('spring-xd-test') {
 			exclude group: 'jline'
 		}
 		compile "com.google.guava:guava:14.0.1"
+		compile "org.springframework.data:spring-data-hadoop-test:$springDataHadoopVersion"
+		// Override the jackson version which spring data hadoop brings in
+		compile "org.codehaus.jackson:jackson-mapper-asl:$jackson1Version"
 		compile "org.springframework.data:spring-data-redis:$springDataRedisVersion"
 		compile "org.springframework:spring-context:$springVersion"
 		compile "org.springframework:spring-context-support:$springVersion"
