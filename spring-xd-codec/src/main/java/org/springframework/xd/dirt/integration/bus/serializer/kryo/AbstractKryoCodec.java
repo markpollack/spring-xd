@@ -16,7 +16,6 @@
 
 package org.springframework.xd.dirt.integration.bus.serializer.kryo;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -37,17 +36,6 @@ import org.springframework.xd.dirt.integration.bus.serializer.AbstractCodec;
  * @author David Turanski
  */
 public abstract class AbstractKryoCodec<T> extends AbstractCodec<T> {
-
-	protected final static int FILE_REGISTRATION_ID = 40;
-
-	protected final static int TUPLE_REGISTRATION_ID = 41;
-
-	protected final static int ARRAY_LIST_REGISTRATION_ID = 42;
-	
-	protected final static int UUID_REGISTRATION_ID = 43;
-
-	protected final static int LONG_REGISTRATION_ID = 44;
-	
 
 	private final KryoFactory factory;
 
@@ -106,18 +94,6 @@ public abstract class AbstractKryoCodec<T> extends AbstractCodec<T> {
 		});
 		input.close();
 		return result;
-	}
-
-	/**
-	 * Deserialize an object when the type is known
-	 *
-	 * @param bytes the byte array containing the serialized object
-	 * @return the object
-	 * @throws IOException
-	 */
-	@Override
-	public T deserialize(byte[] bytes) throws IOException {
-		return deserialize(new ByteArrayInputStream(bytes));
 	}
 
 	protected abstract void doSerialize(Kryo kryo, T object, Output output);
