@@ -66,6 +66,7 @@ task copyXDInstall(type: Copy, dependsOn: [":spring-xd-dirt:build", ":spring-xd-
 	// to include protobuf-java-*-spark.jar following change is necessary.
 	exclude "**/lib/protobuf-java-"+ protobufVersion +".jar"
 	exclude "**/commons-logging*.jar"
+	exclude "**/htrace-core*.jar"
 	exclude "**/lib/spring-data-hadoop-*.jar"
 	exclude "**/lib/mysql-connector-java-*.jar"
 }
@@ -217,6 +218,7 @@ task distShellZip(type: Zip, dependsOn: [copyInstall], overwrite: true) {
                         from("$buildDir/dist/spring-xd/xd/lib/$distro") {
                             include "hadoop-auth-*.jar"
                             include "hadoop-common-*.jar"
+                            include "htrace-core-*.jar"
                             include "hadoop-hdfs-*.jar"
                             include "hadoop-mapreduce-client-core-*.jar"
                             include "protobuf-java-*.jar"
