@@ -13,18 +13,22 @@
 
 package org.springframework.xd.tuple;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.springframework.xd.tuple.TupleBuilder.tuple;
+import org.junit.Before;
+import org.junit.Test;
+import org.springframework.core.io.Resource;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.springframework.xd.tuple.TupleBuilder.tuple;
 
 /**
  * @author David Turanski
@@ -95,6 +99,28 @@ public abstract class AbstractTupleMarshallerTests {
 		assertEquals("v1", newTuple.getTuple("map").getString("k1"));
 		assertEquals("v2", newTuple.getTuple("map").getString("k2"));
 	}
+
+	public String readJson(Resource resource) throws IOException {
+		StringBuilder stringBuilder = new StringBuilder();
+		BufferedReader reader = null;
+		try {
+			reader = new BufferedReader(new InputStreamReader(resource.getInputStream()));
+			String line = null;
+			String ls = System.getProperty("line.separator");
+
+			while ((line = reader.readLine()) != null) {
+				stringBuilder.append(line);
+				stringBuilder.append(ls);
+			}
+		} finally {
+			if (reader != null) {
+				reader.close();
+			}
+		}
+		return stringBuilder.toString();
+	}
+
+
 
 	protected abstract TupleStringMarshaller getMarshaller();
 }

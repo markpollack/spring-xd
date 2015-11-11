@@ -54,16 +54,17 @@ public class JsonStringToTupleConverter implements Converter<String, Tuple> {
 				else if (node.isArray()) {
 					builder.addEntry(name, nodeToList(node));
 				}
+				else if (node.isNull()) {
+					builder.addEntry(name, null);
+				}
+				else if (node.isBoolean()) {
+					builder.addEntry(name, node.booleanValue());
+				}
+				else if (node.isNumber()) {
+					builder.addEntry(name, node.numberValue());
+				}
 				else {
-					//if (name.equals("id")) {//NOSONAR
-					//// TODO how should this be handled?
-					//}
-					//else if (name.equals("timestamp")) {//NOSONAR
-					//// TODO how should this be handled?
-					//}
-					//else {
 					builder.addEntry(name, mapper.treeToValue(node, Object.class));
-					//}
 				}
 			}
 		}
@@ -82,6 +83,15 @@ public class JsonStringToTupleConverter implements Converter<String, Tuple> {
 			}
 			else if (item.isArray()) {
 				list.add(nodeToList(item));
+			}
+			else if (item.isNull()) {
+				list.add(null);
+			}
+			else if (item.isBoolean()) {
+				list.add(item.booleanValue());
+			}
+			else if (item.isNumber()) {
+				list.add(item.numberValue());
 			}
 			else {
 				list.add(mapper.treeToValue(item, Object.class));
